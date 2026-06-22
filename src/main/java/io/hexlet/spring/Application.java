@@ -16,4 +16,10 @@ public class Application {
     String home() {
         return "Hello World!";
     }
+
+    @GetMapping("/about")
+    public String about() {
+        return "This is simple Spring blog!\n"
+                + "I am learning Spring Boot with Hexlet!";
+    }
 }
