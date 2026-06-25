@@ -1,6 +1,8 @@
 package io.hexlet.spring.controller;
 
 import io.hexlet.spring.model.User;
+import io.hexlet.spring.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,53 +22,51 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private List<User> users = new ArrayList<>();
-    private Long nextId = 1L;
+    @Autowired
+    private UserRepository userRepository;
 
-    // GET /api/users - список всех пользователей (200 OK)
+    // GET /api/users - список всех пользователей
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userRepository.findAll());
     }
 
-    // GET /api/users/{id} - получить пользователя по ID (200 OK или 404)
+    // GET /api/users/{id} - получить пользователя по ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = users.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst();
+        Optional<User> user = userRepository.findById(id);
         return ResponseEntity.of(user);
     }
 
-    // POST /api/users - создать пользователя (201 Created)
+    // POST /api/users - создать пользователя
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        user.setId(nextId++);
-        users.add(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        User savedUser = userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
-    // PUT /api/users/{id} - обновить пользователя (200 OK или 404)
+    // PUT /api/users/{id} - обновить пользователя
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-        Optional<User> user = users.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst();
+        Optional<User> existingUser = userRepository.findById(id);
 
-        if (user.isPresent()) {
-            User existingUser = user.get();
-            existingUser.setName(updatedUser.getName());
-            existingUser.setEmail(updatedUser.getEmail());
-            return ResponseEntity.ok(existingUser);
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            user.setEmail(updatedUser.getEmail());
+            user.setFirstName(updatedUser.getFirstName());
+            user.setLastName(updatedUser.getLastName());
+            user.setBirthday(updatedUser.getBirthday());
+            User savedUser = userRepository.save(user);
+            return ResponseEntity.ok(savedUser);
         }
         return ResponseEntity.notFound().build();
     }
 
-    // DELETE /api/users/{id} - удалить пользователя (204 No Content или 404)
+    // DELETE /api/users/{id} - удалить пользователя
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        boolean removed = users.removeIf(u -> u.getId().equals(id));
-        if (removed) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

@@ -19,6 +19,8 @@ dependencies {
     annotationProcessor ("org.projectlombok:lombok:1.18.34")
     testCompileOnly ("org.projectlombok:lombok:1.18.34")
     testAnnotationProcessor ("org.projectlombok:lombok:1.18.34")
+    runtimeOnly("com.h2database:h2")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 }
 
 tasks.withType<Test> {
