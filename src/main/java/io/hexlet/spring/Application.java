@@ -2,6 +2,7 @@ package io.hexlet.spring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 @SpringBootApplication
 @RestController
+@EnableJpaAuditing
 public class Application {
 
     public static void main(String[] args) {
