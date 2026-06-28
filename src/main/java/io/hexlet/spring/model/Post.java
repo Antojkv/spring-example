@@ -50,10 +50,13 @@ public class Post {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    public Post(String title, String content) {
+    public Post(String title, String content, boolean published) {
         this.title = title;
         this.content = content;
-        this.createdAt = LocalDateTime.now();
-        this.published = false;
+        this.published = published;
+    }
+
+    public Post(String title, String content) {
+        this(title, content, false);
     }
 }

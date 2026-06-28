@@ -1,20 +1,17 @@
 package io.hexlet.spring.controller;
 
+import io.hexlet.spring.exception.ResourceNotFoundException;
 import io.hexlet.spring.model.Post;
 import io.hexlet.spring.repository.PostRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import io.hexlet.spring.exception.ResourceNotFoundException;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,10 +22,35 @@ public class PostController {
     @Autowired
     private PostRepository postRepository;
 
-    // GET /api/posts - список всех постов
-    @GetMapping
+    // GET /api/posts - список всех постов (без пагинации)
+    @GetMapping("/all")
     public ResponseEntity<List<Post>> index() {
         return ResponseEntity.ok(postRepository.findAll());
+    }
+
+    // GET /api/posts - список опубликованных постов с пагинацией и сортировкой
+    @GetMapping
+    public ResponseEntity<Page<Post>> getPublishedPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+
+        // Определяем направление сортировки
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+
+        // Создаем объект сортировки
+        Sort sort = Sort.by(sortDirection, sortBy);
+
+        // Создаем объект пагинации с сортировкой
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Получаем только опубликованные посты
+        Page<Post> postsPage = postRepository.findByPublishedTrue(pageable);
+
+        return ResponseEntity.ok(postsPage);
     }
 
     // GET /api/posts/{id} - получить пост по ID
@@ -61,6 +83,7 @@ public class PostController {
     }
 
     // DELETE /api/posts/{id} - удалить пост
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> destroy(@PathVariable Long id) {
         if (!postRepository.existsById(id)) {
             throw new ResourceNotFoundException("Post with id " + id + " not found");
