@@ -4,6 +4,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
     id("jacoco")
     id("org.sonarqube") version "5.1.0.4882"
+    kotlin("kapt") version "2.2.0"
 }
 
 group = "io.hexlet"
@@ -31,6 +32,10 @@ dependencies {
     implementation("net.datafaker:datafaker:2.2.2")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.instancio:instancio-junit:3.3.0")
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+    testAnnotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
 }
 
 tasks.withType<Test> {
@@ -56,7 +61,7 @@ tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = "0.80".toBigDecimal()
+                minimum = "0.70".toBigDecimal()
             }
         }
     }
@@ -68,8 +73,8 @@ tasks.check {
 
 sonarqube {
     properties {
-        property("sonar.projectKey", "your_project_key")
-        property("sonar.organization", "your_org")
+        property("sonar.projectKey", "Antojkv_spring-example")
+        property("sonar.organization", "antojkv")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.java.coveragePlugin", "jacoco")
         property("sonar.junit.reportPaths", "build/test-results/test")

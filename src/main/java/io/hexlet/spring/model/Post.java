@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,8 +34,8 @@ public class Post {
     private Long id;
 
     @NotBlank(message = "Title is required")
-    @Size(min = 3, max = 200, message = "Title must be between 3 and 200 characters")
-    @Column(nullable = false, length = 200)
+    @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
+    @Column(nullable = false, length = 100)
     private String title;
 
     @NotBlank(message = "Content is required")
@@ -52,7 +53,8 @@ public class Post {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne
+    // Связь с пользователем (много постов -> один пользователь)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

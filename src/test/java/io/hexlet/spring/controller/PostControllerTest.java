@@ -41,23 +41,23 @@ class PostControllerTest {
     private Faker faker;
 
     private User testUser;
+    private Long testUserId;
 
     @BeforeEach
     void setUp() {
         postRepository.deleteAll();
         userRepository.deleteAll();
 
-        // Создаем тестового пользователя вручную
         testUser = new User();
         testUser.setEmail(faker.internet().emailAddress());
         testUser.setFirstName(faker.name().firstName());
         testUser.setLastName(faker.name().lastName());
         testUser = userRepository.save(testUser);
+        testUserId = testUser.getId();
     }
 
     @Test
     void testGetPublishedPosts_returns200() throws Exception {
-        // Создаем опубликованные посты
         for (int i = 0; i < 3; i++) {
             Post post = new Post();
             post.setTitle(faker.book().title());
@@ -107,10 +107,12 @@ class PostControllerTest {
 
     @Test
     void testCreatePost_returns201() throws Exception {
+        // Создаем пост с userId
         Map<String, Object> postData = new HashMap<>();
         postData.put("title", faker.book().title());
         postData.put("content", faker.lorem().paragraph(3));
         postData.put("published", true);
+        postData.put("userId", testUserId);  // Добавляем userId
 
         mockMvc.perform(post("/api/posts")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,6 +125,21 @@ class PostControllerTest {
         Map<String, String> postData = new HashMap<>();
         postData.put("title", "");
         postData.put("content", "short");
+
+        mockMvc.perform(post("/api/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postData)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void testCreatePost_withoutUserId_returns422() throws Exception {
+        // Пост без userId (должен вернуть 422)
+        Map<String, Object> postData = new HashMap<>();
+        postData.put("title", faker.book().title());
+        postData.put("content", faker.lorem().paragraph(3));
+        postData.put("published", true);
+        // userId отсутствует
 
         mockMvc.perform(post("/api/posts")
                         .contentType(MediaType.APPLICATION_JSON)

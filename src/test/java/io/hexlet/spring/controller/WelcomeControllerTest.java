@@ -1,4 +1,4 @@
-package io.hexlet.spring;
+package io.hexlet.spring.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +12,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ApplicationTest {
+class WelcomeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Test
-    void contextLoads() {
-        // Проверяем, что контекст Spring загружается
-    }
 
     @Test
     void testHome_returnsHelloWorld() throws Exception {

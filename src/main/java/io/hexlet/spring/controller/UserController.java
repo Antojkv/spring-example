@@ -1,19 +1,18 @@
 package io.hexlet.spring.controller;
 
+import io.hexlet.spring.dto.UserCreateDTO;
+import io.hexlet.spring.dto.UserDTO;
+import io.hexlet.spring.dto.UserPatchDTO;
+import io.hexlet.spring.dto.UserUpdateDTO;
 import io.hexlet.spring.exception.ResourceNotFoundException;
+import io.hexlet.spring.mapper.UserMapper;
 import io.hexlet.spring.model.User;
 import io.hexlet.spring.repository.UserRepository;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,43 +20,62 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    // Инъекция через конструктор (рекомендуемый способ)
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserMapper userMapper;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userRepository.findAll());
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        List<UserDTO> userDTOs = users.stream()
+                .map(userMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(userDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userMapper.toDTO(user));
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+        User user = userMapper.toEntity(userCreateDTO);
         User savedUser = userRepository.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDTO(savedUser));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User updatedUser) {
+    public ResponseEntity<UserDTO> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
 
-        existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setFirstName(updatedUser.getFirstName());
-        existingUser.setLastName(updatedUser.getLastName());
-        existingUser.setBirthday(updatedUser.getBirthday());
+        userMapper.updateEntity(userUpdateDTO, existingUser);
+        User savedUser = userRepository.save(existingUser);
+        return ResponseEntity.ok(userMapper.toDTO(savedUser));
+    }
+
+    // Частичное обновление через PATCH
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserDTO> patchUser(
+            @PathVariable Long id,
+            @RequestBody UserPatchDTO userPatchDTO) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+
+        // Обновляем только переданные поля
+        userPatchDTO.getFirstName().ifPresent(existingUser::setFirstName);
+        userPatchDTO.getLastName().ifPresent(existingUser::setLastName);
+        userPatchDTO.getEmail().ifPresent(existingUser::setEmail);
 
         User savedUser = userRepository.save(existingUser);
-        return ResponseEntity.ok(savedUser);
+        return ResponseEntity.ok(userMapper.toDTO(savedUser));
     }
 
     @DeleteMapping("/{id}")
@@ -69,3 +87,4 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 }
+
