@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class PostCreateDTO {
@@ -21,5 +23,7 @@ public class PostCreateDTO {
     private boolean published;
 
     @NotNull(message = "User ID is required")
-    private Long userId;  // ID автора поста
+    private Long userId;
+
+    private List<Long> tagIds;  // ID тегов
 }

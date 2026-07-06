@@ -4,17 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
-public class PostDTO {
+public class TagDTO {
     private Long id;
-    private String title;
-    private String content;
-    private boolean published;
+    private String name;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long userId;
-    private List<TagDTO> tags;  // Список тегов
 }

@@ -1,6 +1,8 @@
 package io.hexlet.spring.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,10 +12,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,10 +33,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Post {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Post implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @NotBlank(message = "Title is required")
@@ -53,10 +61,19 @@ public class Post {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    // Связь с пользователем (много постов -> один пользователь)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @NotNull(message = "User is required")
     private User user;
+
+    // Связь многие-ко-многим с Tag
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "post_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
 
     public Post(String title, String content, boolean published) {
         this.title = title;
@@ -66,5 +83,16 @@ public class Post {
 
     public Post(String title, String content) {
         this(title, content, false);
+    }
+
+    // Вспомогательные методы для управления тегами
+    public void addTag(Tag tag) {
+        tags.add(tag);
+        tag.getPosts().add(this);
+    }
+
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
+        tag.getPosts().remove(this);
     }
 }

@@ -4,43 +4,50 @@ import io.hexlet.spring.dto.UserCreateDTO;
 import io.hexlet.spring.dto.UserDTO;
 import io.hexlet.spring.dto.UserUpdateDTO;
 import io.hexlet.spring.model.User;
+import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest  // ← Важно: используем Spring контекст
 class UserMapperTest {
 
+    @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private Faker faker;
+
+    private User testUser;
 
     @BeforeEach
     void setUp() {
-        // Используем Mappers.getMapper() для получения экземпляра маппера
-        userMapper = Mappers.getMapper(UserMapper.class);
+        testUser = new User();
+        testUser.setEmail(faker.internet().emailAddress());
+        testUser.setFirstName(faker.name().firstName());
+        testUser.setLastName(faker.name().lastName());
     }
 
     @Test
     void testToDTO_shouldConvertUserToUserDTO() {
         // Подготовка
-        User user = new User();
-        user.setId(1L);
-        user.setEmail("test@example.com");
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setBirthday(LocalDate.of(1990, 1, 1));
+        testUser.setId(1L);
+        testUser.setBirthday(LocalDate.of(1990, 1, 1));
 
         // Выполнение
-        UserDTO dto = userMapper.toDTO(user);
+        UserDTO dto = userMapper.toDTO(testUser);
 
         // Проверка
         assertThat(dto).isNotNull();
         assertThat(dto.getId()).isEqualTo(1L);
-        assertThat(dto.getEmail()).isEqualTo("test@example.com");
-        assertThat(dto.getFirstName()).isEqualTo("John");
-        assertThat(dto.getLastName()).isEqualTo("Doe");
+        assertThat(dto.getEmail()).isEqualTo(testUser.getEmail());
+        assertThat(dto.getFirstName()).isEqualTo(testUser.getFirstName());
+        assertThat(dto.getLastName()).isEqualTo(testUser.getLastName());
         assertThat(dto.getBirthday()).isEqualTo(LocalDate.of(1990, 1, 1));
     }
 
@@ -48,18 +55,18 @@ class UserMapperTest {
     void testToEntity_shouldConvertUserCreateDTOToUser() {
         // Подготовка
         UserCreateDTO dto = new UserCreateDTO();
-        dto.setEmail("test@example.com");
-        dto.setFirstName("John");
-        dto.setLastName("Doe");
+        dto.setEmail(testUser.getEmail());
+        dto.setFirstName(testUser.getFirstName());
+        dto.setLastName(testUser.getLastName());
 
         // Выполнение
         User user = userMapper.toEntity(dto);
 
         // Проверка
         assertThat(user).isNotNull();
-        assertThat(user.getEmail()).isEqualTo("test@example.com");
-        assertThat(user.getFirstName()).isEqualTo("John");
-        assertThat(user.getLastName()).isEqualTo("Doe");
+        assertThat(user.getEmail()).isEqualTo(testUser.getEmail());
+        assertThat(user.getFirstName()).isEqualTo(testUser.getFirstName());
+        assertThat(user.getLastName()).isEqualTo(testUser.getLastName());
     }
 
     @Test
@@ -101,7 +108,7 @@ class UserMapperTest {
 
         // Проверка - обновляется только email
         assertThat(user.getEmail()).isEqualTo("new@example.com");
-        assertThat(user.getFirstName()).isEqualTo("Old");  // не изменилось
-        assertThat(user.getLastName()).isEqualTo("Name");   // не изменилось
+        assertThat(user.getFirstName()).isEqualTo("Old");
+        assertThat(user.getLastName()).isEqualTo("Name");
     }
 }

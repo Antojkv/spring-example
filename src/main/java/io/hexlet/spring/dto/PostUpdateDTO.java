@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.openapitools.jackson.nullable.JsonNullable;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,5 +21,6 @@ public class PostUpdateDTO {
     private String content;
 
     private boolean published;
-}
 
+    private List<Long> tagIds;  // ID тегов
+}
