@@ -24,5 +24,9 @@ public class UserCreateDTO {
     @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters")
     private String lastName;
 
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters")
+    private String passwordDigest;
+
     private LocalDate birthday;
 }

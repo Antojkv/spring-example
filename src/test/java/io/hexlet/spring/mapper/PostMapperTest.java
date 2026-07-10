@@ -6,17 +6,21 @@ import io.hexlet.spring.dto.PostUpdateDTO;
 import io.hexlet.spring.model.Post;
 import io.hexlet.spring.model.User;
 import io.hexlet.spring.repository.UserRepository;
+import io.hexlet.spring.util.TestUtils;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest  // ← Важно: используем Spring контекст
+@SpringBootTest
+@ActiveProfiles("test")
 class PostMapperTest {
 
     @Autowired
@@ -28,22 +32,20 @@ class PostMapperTest {
     @Autowired
     private Faker faker;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private User testUser;
 
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
-
-        testUser = new User();
-        testUser.setEmail(faker.internet().emailAddress());
-        testUser.setFirstName(faker.name().firstName());
-        testUser.setLastName(faker.name().lastName());
+        testUser = TestUtils.createTestUser(passwordEncoder);
         testUser = userRepository.save(testUser);
     }
 
     @Test
     void testToDTO_shouldConvertPostToPostDTO() {
-        // Подготовка
         Post post = new Post();
         post.setId(1L);
         post.setTitle("Test Title");
@@ -53,10 +55,8 @@ class PostMapperTest {
         post.setUpdatedAt(LocalDateTime.now());
         post.setUser(testUser);
 
-        // Выполнение
         PostDTO dto = postMapper.toDTO(post);
 
-        // Проверка
         assertThat(dto).isNotNull();
         assertThat(dto.getId()).isEqualTo(1L);
         assertThat(dto.getTitle()).isEqualTo("Test Title");
@@ -69,17 +69,14 @@ class PostMapperTest {
 
     @Test
     void testToEntity_shouldConvertPostCreateDTOToPost() {
-        // Подготовка
         PostCreateDTO dto = new PostCreateDTO();
         dto.setTitle("Test Title");
         dto.setContent("Test content with more than 10 characters");
         dto.setPublished(true);
         dto.setUserId(testUser.getId());
 
-        // Выполнение
         Post post = postMapper.toEntity(dto);
 
-        // Проверка
         assertThat(post).isNotNull();
         assertThat(post.getTitle()).isEqualTo("Test Title");
         assertThat(post.getContent()).isEqualTo("Test content with more than 10 characters");
@@ -90,7 +87,6 @@ class PostMapperTest {
 
     @Test
     void testUpdateEntity_shouldUpdateExistingPost() {
-        // Подготовка
         Post post = new Post();
         post.setTitle("Old Title");
         post.setContent("Old content");
@@ -102,19 +98,16 @@ class PostMapperTest {
         updateDto.setContent("New content with more than 10 characters");
         updateDto.setPublished(true);
 
-        // Выполнение
         postMapper.updateEntity(updateDto, post);
 
-        // Проверка
         assertThat(post.getTitle()).isEqualTo("New Title");
         assertThat(post.getContent()).isEqualTo("New content with more than 10 characters");
         assertThat(post.isPublished()).isTrue();
-        assertThat(post.getUser()).isEqualTo(testUser);  // пользователь не изменился
+        assertThat(post.getUser()).isEqualTo(testUser);
     }
 
     @Test
     void testUpdateEntity_shouldHandleNullValues() {
-        // Подготовка
         Post post = new Post();
         post.setTitle("Old Title");
         post.setContent("Old content with more than 10 characters");
@@ -123,12 +116,9 @@ class PostMapperTest {
 
         PostUpdateDTO updateDto = new PostUpdateDTO();
         updateDto.setTitle("New Title");
-        // content и published не установлены
 
-        // Выполнение
         postMapper.updateEntity(updateDto, post);
 
-        // Проверка - обновляется только title
         assertThat(post.getTitle()).isEqualTo("New Title");
         assertThat(post.getContent()).isEqualTo("Old content with more than 10 characters");
         assertThat(post.isPublished()).isFalse();

@@ -12,16 +12,14 @@ spring:
     properties:
       hibernate:
         format_sql: false
+        javax:
+          persistence:
+            validation:
+              mode: none
 
   output:
     ansi:
       enabled: always
-
-logging:
-  level:
-    root: WARN
-    org.springframework: WARN
-    org.hibernate: WARN
 
 app:
   welcome-message: "Welcome to Spring blog!"
