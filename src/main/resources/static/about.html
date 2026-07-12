@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О нас - Hexlet Spring Blog</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 О нашем блоге</h1>
+            <nav>
+                <a href="/">Главная</a>
+                <a href="/about.html" class="active">О нас</a>
+                <a href="/welcome">Приветствие</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="about-content">
+                <div class="logo-container">
+                    <img src="/img/logo.png" alt="Hexlet Spring Blog Logo" class="logo" />
+                    <p class="logo-text">Spring Boot Blog</p>
+                </div>
+
+                <div class="info-card">
+                    <h2>📖 О проекте</h2>
+                    <p>Этот блог создан в рамках обучения на Hexlet. Здесь мы изучаем <strong>Spring Boot</strong> и создаём полноценное веб-приложение с:</p>
+                    <ul>
+                        <li>✅ REST API с JWT аутентификацией</li>
+                        <li>✅ База данных H2</li>
+                        <li>✅ CRUD операции для постов и пользователей</li>
+                        <li>✅ Теги для постов</li>
+                        <li>✅ Пагинация и фильтрация</li>
+                        <li>✅ Статические ресурсы</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h2>🛠️ Технологии</h2>
+                    <div class="tech-badges">
+                        <span class="badge">Spring Boot 3.2</span>
+                        <span class="badge">Spring Data JPA</span>
+                        <span class="badge">Spring Security</span>
+                        <span class="badge">JWT</span>
+                        <span class="badge">H2 Database</span>
+                        <span class="badge">Lombok</span>
+                        <span class="badge">MapStruct</span>
+                        <span class="badge">Gradle</span>
+                    </div>
+                </div>
+
+                <div class="info-card interactive">
+                    <h2>✨ Интерактив</h2>
+                    <p>Нажмите на кнопку, чтобы увидеть магию JavaScript!</p>
+                    <button id="magicButton" class="magic-btn">✨ Нажми меня</button>
+                    <p id="magicMessage" class="magic-message"></p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2026 Hexlet Spring Blog. Все права защищены.</p>
+            <p class="footer-small">Сделано с ❤️ в рамках обучения на Hexlet</p>
+        </footer>
+    </div>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>

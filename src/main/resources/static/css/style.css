@@ -1,0 +1,257 @@
+css
+/* ===== Общие стили ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+/* ===== Заголовок ===== */
+header {
+    text-align: center;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+nav {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+nav a {
+    text-decoration: none;
+    color: #555;
+    padding: 8px 20px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+nav a:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+nav a.active {
+    background: #667eea;
+    color: white;
+}
+
+/* ===== Основной контент ===== */
+.about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* ===== Логотип ===== */
+.logo-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #667eea;
+    padding: 10px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05) rotate(-5deg);
+}
+
+.logo-text {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* ===== Карточки информации ===== */
+.info-card {
+    background: #f8f9ff;
+    border-radius: 15px;
+    padding: 25px;
+    border-left: 5px solid #667eea;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+}
+
+.info-card h2 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+}
+
+.info-card p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.info-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.info-card ul li {
+    padding: 6px 0;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+/* ===== Технологии (бейджи) ===== */
+.tech-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.badge {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: transform 0.2s ease;
+}
+
+.badge:hover {
+    transform: scale(1.05);
+}
+
+/* ===== Интерактивный блок ===== */
+.interactive {
+    border-left-color: #ff6b6b;
+    text-align: center;
+}
+
+.magic-btn {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    border: none;
+    padding: 14px 35px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+.magic-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(238, 90, 36, 0.4);
+}
+
+.magic-btn:active {
+    transform: scale(0.95);
+}
+
+.magic-message {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    min-height: 30px;
+    color: #333;
+}
+
+.magic-message.show {
+    animation: fadeInUp 0.5s ease;
+}
+
+/* ===== Подвал ===== */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+    color: #777;
+}
+
+.footer-small {
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 5px;
+}
+
+/* ===== Анимации ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Адаптивность ===== */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    .logo {
+        width: 80px;
+        height: 80px;
+    }
+
+    .tech-badges {
+        justify-content: center;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 4px 12px;
+    }
+
+    nav a {
+        padding: 6px 14px;
+        font-size: 0.9rem;
+    }
+}

@@ -36,12 +36,22 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/api/users").permitAll()
+                        // Публичные страницы и статика
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/about").permitAll()
+                        .requestMatchers("/about.html").permitAll()
                         .requestMatchers("/welcome").permitAll()
+                        .requestMatchers("/admin-info").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+                        // Статические ресурсы
+                        .requestMatchers("/css/**").permitAll()
+                        .requestMatchers("/js/**").permitAll()
+                        .requestMatchers("/img/**").permitAll()
+                        .requestMatchers("/images/**").permitAll()
+                        // API
+                        .requestMatchers("/api/login").permitAll()
+                        .requestMatchers("/api/users").permitAll()
+                        // Защищенные эндпоинты
                         .requestMatchers("/api/posts/**").authenticated()
                         .requestMatchers("/api/tags/**").authenticated()
                         .anyRequest().authenticated())
